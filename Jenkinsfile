@@ -19,6 +19,7 @@ pipeline {
                    npm ci
                    npm run build
                    ls -la
+                '''
             }
         }
     }
