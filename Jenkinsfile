@@ -39,7 +39,8 @@ pipeline {
                 '''
             }
         }
-        post{
+    }
+    post{
             always{
                 publishHTML(target: [
                     allowMissing: false,
@@ -50,6 +51,4 @@ pipeline {
                     reportName: 'Playwright HTML Report' // Report name displayed in Jenkins
                 ])
             }
-        }
-    }
 }
