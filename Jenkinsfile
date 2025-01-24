@@ -39,17 +39,5 @@ pipeline {
                 '''
             }
         }
-        stage('Publish HTML Report') {
-            steps {
-                publishHTML(target: [
-                    allowMissing: false,
-                    alwaysLinkToLastBuild: true,
-                    keepAll: true,
-                    reportDir: 'playwright-report',  // Directory containing your HTML report
-                    reportFiles: 'index.html',       // Entry point file of your report
-                    reportName: 'Playwright HTML Report' // Report name displayed in Jenkins
-                ])
-            }
-        }
     }
 }
