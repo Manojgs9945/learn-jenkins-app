@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     stages {
+        /*
         stage('build') {
             agent {
                 docker{
@@ -21,24 +22,59 @@ pipeline {
                    ls -la
                 '''
             }
+        }*/
+        stage("all_test"){
+            parallel{
+                stage('unit_test'){
+                    steps{
+                        sh'''
+                        test -f public/index.html 
+                        '''
+                    }
         }
-        stage('E2E'){
-            agent {
-                docker{
-                    image 'mcr.microsoft.com/playwright:v1.50.0-noble'
-                    reuseNode true
+            stage('E2E'){
+                agent {
+                    docker{
+                        image 'mcr.microsoft.com/playwright:v1.50.0-noble'
+                        reuseNode true
+                    }
+                }
+                steps{
+                    sh '''
+                    npm install serve
+                    npx playwright install
+                    node_modules/.bin/serve -s build &
+                    sleep 20
+                    npx playwright test --reporter=html
+                    '''
                 }
             }
-            steps{
-                sh '''
-                npm install serve
-                npx playwright install
-                node_modules/.bin/serve -s build &
-                sleep 20
-                npx playwright test --reporter=html
-                '''
             }
         }
+        // stage('unit_test'){
+        //     steps{
+        //         sh'''
+        //         test -f public/index.html 
+        //         '''
+        //     }
+        // }
+        // stage('E2E'){
+        //     agent {
+        //         docker{
+        //             image 'mcr.microsoft.com/playwright:v1.50.0-noble'
+        //             reuseNode true
+        //         }
+        //     }
+        //     steps{
+        //         sh '''
+        //         npm install serve
+        //         npx playwright install
+        //         node_modules/.bin/serve -s build &
+        //         sleep 20
+        //         npx playwright test --reporter=html
+        //         '''
+        //     }
+        // }
     }
     post{
         always{
