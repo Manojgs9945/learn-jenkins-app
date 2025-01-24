@@ -50,5 +50,6 @@ pipeline {
                     reportName: 'Playwright HTML Report' // Report name displayed in Jenkins
                 ])
             }
+        }
     }
 }
