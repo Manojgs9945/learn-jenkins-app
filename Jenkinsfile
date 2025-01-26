@@ -51,11 +51,11 @@ pipeline {
                         npx playwright test --reporter=html
                         '''
                     }
-                }
-            post{
-                always{
-                        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'playwright HTML Report', reportTitles: '', useWrapperFileDirectly: true])
-                }
+                     post{
+                        always{
+                                publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'playwright HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+                        }
+                    }
                 }
             }
         }
@@ -103,14 +103,14 @@ pipeline {
             }
         }
         stage('Post-Deploy'){
-            stage('E2E'){
+            stage('Prod E2E'){
                     agent{
                         docker{
                             image 'mcr.microsoft.com/playwright:v1.50.0-noble'
                             reuseNode true
                             }
                          }
-                     environment{
+                    environment{
                         CI_ENVIRONMENT_URL = 'https://firstmanualdepolyment.netlify.app/'
                     }
                     steps{
