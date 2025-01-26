@@ -17,7 +17,7 @@ pipeline {
                 echo 'Hello World'
                 script {
                     env.MY_VAR1 = 'This is Variable1'
-                    env.MY_VAR2 = sh(script: 'date',returnStdout: true)
+                    env.MY_VAR2 = sh(script: 'date', returnStdout: true)
                 }
                 sh '''
                    ls -la
