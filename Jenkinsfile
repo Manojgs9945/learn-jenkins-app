@@ -107,6 +107,7 @@ pipeline {
                         input message: 'Are you ready for deploy?', ok: 'Proceed with deployment'
                         }
                 }
+        }
         stage('Deploy Prod') {
             agent {
                 docker{
