@@ -102,8 +102,7 @@ pipeline {
                 '''
             }
         }
-        stage('Post-Deploy'){
-            stage('Prod E2E'){
+        stage('Prod E2E'){
                 agent{
                     docker{
                             image 'mcr.microsoft.com/playwright:v1.50.0-noble'
@@ -121,5 +120,4 @@ pipeline {
                 }
             }
         }
-    }
 }
