@@ -94,11 +94,11 @@ pipeline {
                     reuseNode true
                 }
             }
-            script{
-                env.ST_LINK = sh (script :"node_modules/.bin/node-jq -r '.deploy_url' deploy_status.json", returnStdout: true)
-            }
             steps {
                 echo 'Deployment starts'
+                script{
+                env.ST_LINK = sh(script : "node_modules/.bin/node-jq -r '.deploy_url' deploy_status.json", returnStdout: true)
+                }
                 sh '''
                    npm install netlify-cli node-jq
                    node_modules/.bin/netlify --version
