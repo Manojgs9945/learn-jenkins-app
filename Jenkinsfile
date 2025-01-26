@@ -52,8 +52,12 @@ pipeline {
                         '''
                     }
                 }
+            post{
+                always{
+                        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'playwright HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+                }
+                }
             }
-        }
         // stage('unit_test'){
         //     steps{
         //         sh'''
@@ -78,7 +82,7 @@ pipeline {
         //         '''
         //     }
         // }
-        
+
         stage('Deploy') {
             agent {
                 docker{
@@ -86,7 +90,6 @@ pipeline {
                     reuseNode true
                 }
             }
-
             steps {
                 echo 'Deployment starts'
                 sh '''
@@ -98,11 +101,29 @@ pipeline {
                 '''
             }
         }
-    }
-    post{
-        always{
-                publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'playwright HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+        stage('Post-Deploy'){
+            stage('E2E'){
+                    agent{
+                        docker{
+                            image 'mcr.microsoft.com/playwright:v1.50.0-noble'
+                            reuseNode true
+                            }
+                         }
+                     environment{
+                        CI_ENVIRONMENT_URL = 'https://firstmanualdepolyment.netlify.app/'
+                    }
+                    steps{
+                        sh '''
+                        npx playwright install
+                        npx playwright test --reporter=html
+                        '''
+                    }
+                }
+             post{
+                always{
+                        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'playwright HTML Report e2e post', reportTitles: '', useWrapperFileDirectly: true])
+                }
+            
         }
-
     }
 }
