@@ -105,7 +105,7 @@ pipeline {
                    node_modules/.bin/netlify deploy  --dir=build --json > deploy_status.json
                 '''
                 script{
-                env.ST_LINK = sh(script : "node_modules/.bin/node-jq -r '.deploy_url' deploy_status.json", returnStdout: true)
+                env.ST_LINK = sh(script: "node_modules/.bin/node-jq -r '.deploy_url' deploy_status.json", returnStdout: true)
                 }
             }
         }
