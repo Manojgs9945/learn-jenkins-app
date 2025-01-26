@@ -58,6 +58,7 @@ pipeline {
                 }
                 }
             }
+        }
         // stage('unit_test'){
         //     steps{
         //         sh'''
@@ -125,5 +126,6 @@ pipeline {
                 }
             
         }
+    }
     }
 }
