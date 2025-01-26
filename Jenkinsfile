@@ -96,15 +96,16 @@ pipeline {
             }
             steps {
                 echo 'Deployment starts'
-                script{
-                env.ST_LINK = sh(script : "node_modules/.bin/node-jq -r '.deploy_url' deploy_status.json", returnStdout: true)
-                }
+                // script{
+                // env.ST_LINK = sh(script : "", returnStdout: true)
+                // }
                 sh '''
                    npm install netlify-cli node-jq
                    node_modules/.bin/netlify --version
                    echo "Site id deployed : $NETLIFY_SITE_ID"
                    node_modules/.bin/netlify status
                    node_modules/.bin/netlify deploy  --dir=build --json > deploy_status.json
+                   env.ST_LINK = node_modules/.bin/node-jq -r '.deploy_url' deploy_status.json
                 '''
             }
         }
