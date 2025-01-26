@@ -129,7 +129,7 @@ pipeline {
                                 publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'playwright HTML Report E2E Stage', reportTitles: '', useWrapperFileDirectly: true])
                             }
                     }
-                }
+        }
         stage('Approval'){
             steps{
                 timeout(15){
