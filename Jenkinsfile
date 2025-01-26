@@ -116,7 +116,7 @@ pipeline {
                             }
                     }
                 environment{
-                        CI_ENVIRONMENT_URL = ${env.ST_LINK}
+                        CI_ENVIRONMENT_URL = '${env.ST_LINK}'
                 }
                 steps{
                         sh '''
