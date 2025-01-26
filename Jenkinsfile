@@ -15,6 +15,10 @@ pipeline {
             }
             steps {
                 echo 'Hello World'
+                script {
+                    env.MY_VAR1 = 'This is Variable1'
+                    env.MY_VAR2 = sh(script: 'date',returnStdout: true)
+                }
                 sh '''
                    ls -la
                    node --version
@@ -100,10 +104,6 @@ pipeline {
                    node_modules/.bin/netlify deploy  --dir=build --json > deploy_status.json
                    node_modules/.bin/node-jq -r '.deploy_url' deploy_status.json
                 '''
-                script {
-                    env.MY_VAR1 = 'This is Variable1'
-                    env.MY_VAR2 = sh(script: 'date',returnStdout: true)
-                }
             }
         }
         stage('Approval'){
