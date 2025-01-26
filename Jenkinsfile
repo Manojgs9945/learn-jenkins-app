@@ -100,6 +100,10 @@ pipeline {
                    node_modules/.bin/netlify deploy  --dir=build --json > deploy_status.json
                    node_modules/.bin/node-jq -r '.deploy_url' deploy_status.json
                 '''
+                script {
+                    env.MY_VAR1 = 'This is Variable1'
+                    env.MY_VAR2 = sh(script: 'date',returnStdout: true)
+                }
             }
         }
         stage('Approval'){
@@ -118,6 +122,8 @@ pipeline {
             }
             steps {
                 echo 'Deployment starts'
+                echo "MY_VAR1 is : ${env.MY_VAR1}"
+                echo "Date from deploy staging : ${env.MY_VAR2}"
                 sh '''
                    npm install netlify-cli 
                    node_modules/.bin/netlify --version
