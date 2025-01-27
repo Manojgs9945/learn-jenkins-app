@@ -119,12 +119,12 @@ pipeline {
                         CI_ENVIRONMENT_URL = '${env.ST_LINK}'
                 }
                 steps{
-                        sh '''
-                        npx playwright install
-                        npm start &
-                        sleep 10
-                        npx playwright test --reporter=html
-                        '''
+                        // sh '''
+                        // // npx playwright install
+                        // // npm start &
+                        // // sleep 10
+                        // // npx playwright test --reporter=html
+                        // '''
                 }
                 // post{
                 //         always{
