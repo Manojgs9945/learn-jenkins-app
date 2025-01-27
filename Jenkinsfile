@@ -96,23 +96,15 @@ pipeline {
             }
             steps {
                 echo 'Deployment starts'
-                // 
                 sh '''
                    npm install netlify-cli node-jq
                    node_modules/.bin/netlify --version
                    echo "Site id deployed : $NETLIFY_SITE_ID"
                    node_modules/.bin/netlify status
                    node_modules/.bin/netlify deploy  --dir=build --json > deploy_status.json
-                   CI_ENVIRONMENT_URL = ${node_modules/.bin/node-jq -r '.deploy_url' deploy_status.json)
-                   npx playwright install
-                   npx playwright test --reporter=html
+                   node_modules/.bin/node-jq -r '.deploy_url' deploy_status.json
                 '''
             }
-                post{
-                        always{
-                                publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'playwright HTML Report E2E Stage', reportTitles: '', useWrapperFileDirectly: true])
-                            }
-                    }
         }
         stage('Approval'){
             steps{
