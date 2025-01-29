@@ -101,7 +101,7 @@ pipeline {
                    node_modules/.bin/netlify --version
                    echo "Site id deployed : $NETLIFY_SITE_ID"
                    node_modules/.bin/netlify status
-                   ode_modules/.bin/netlify deploy  --dir=build --json > deploy_status_stage.json
+                   node_modules/.bin/netlify deploy  --dir=build --json > deploy_status_stage.json
                 '''
                 script{
                    env.ST_LINK = sh(script : "node_modules/.bin/node-jq -r '.deploy_url' deploy_status_stage.json", returnStdout: true)
