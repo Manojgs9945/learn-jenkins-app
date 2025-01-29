@@ -3,10 +3,15 @@ pipeline {
     environment{
         NETLIFY_SITE_ID = 'fb6ed9c8-960a-46ec-bf5c-9abc5b166757'
         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
-        REACT_APP_VERSION = "1.0.$BUILD_ID"
+        REACT_APP_VERSION = '1.0.$BUILD_ID"
     }
 
     stages {
+        stage('Docker'){
+         steps{
+          sh 'docker build -t my_play .'
+         }
+        }
         stage('build') {
             agent {
                 docker{
@@ -30,39 +35,38 @@ pipeline {
                 '''
             }
         }
-        // stage("all_test"){
-        //     parallel{
-        //         stage('unit_test'){
-        //             steps{
-        //                 sh'''
-        //                 test -f public/index.html
-        //                 '''
-        //             }
-        //         }
-        //         stage('E2E'){
-        //             agent {
-        //                 docker{
-        //                     image 'mcr.microsoft.com/playwright:v1.50.0-noble'
-        //                     reuseNode true
-        //                 }
-        //             }
-        //             steps{
-        //                 sh '''
-        //                 npm install serve
-        //                 npx playwright install
-        //                 node_modules/.bin/serve -s build &
-        //                 sleep 20
-        //                 npx playwright test --reporter=html
-        //                 '''
-        //             }
-        //             post{
-        //                 always{
-        //                         publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'playwright HTML paralel', reportTitles: '', useWrapperFileDirectly: true])
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+        stage("all_test"){
+            parallel{
+                stage('unit_test'){
+                    steps{
+                        sh'''
+                        test -f public/index.html
+                        '''
+                    }
+                }
+                stage('E2E'){
+                    agent {
+                        docker{
+                            image 'my_play'
+                            reuseNode true
+                        }
+                    }
+                    steps{
+                        sh '''
+                        npx playwright install
+                        node_modules/.bin/serve -s build &
+                        sleep 20
+                        npx playwright test --reporter=html
+                        '''
+                    }
+                    post{
+                        always{
+                                publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'playwright HTML paralel', reportTitles: '', useWrapperFileDirectly: true])
+                        }
+                    }
+                }
+            }
+        }
             // stage('unit_test'){
             //     steps{
             //         sh'''
@@ -112,7 +116,7 @@ pipeline {
         stage('stage E2E'){
                 agent{
                     docker{
-                            image 'mcr.microsoft.com/playwright:v1.50.0-noble'
+                            image 'my_play'
                             reuseNode true
                     }
                 }
