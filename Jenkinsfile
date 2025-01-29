@@ -3,7 +3,7 @@ pipeline {
     environment{
         NETLIFY_SITE_ID = 'fb6ed9c8-960a-46ec-bf5c-9abc5b166757'
         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
-         }
+    }
 
     stages {
         stage('build') {
@@ -101,10 +101,10 @@ pipeline {
                    node_modules/.bin/netlify --version
                    echo "Site id deployed : $NETLIFY_SITE_ID"
                    node_modules/.bin/netlify status
-                   node_modules/.bin/netlify deploy  --dir=build --json > deploy_status.json
+                   ode_modules/.bin/netlify deploy  --dir=build --json > deploy_status_stage.json
                 '''
                 script{
-                   env.ST_LINK = sh(script : "node_modules/.bin/node-jq -r '.deploy_url' deploy_status.json", returnStdout: true)
+                   env.ST_LINK = sh(script : "node_modules/.bin/node-jq -r '.deploy_url' deploy_status_stage.json", returnStdout: true)
                 }
             }
         }
@@ -113,15 +113,15 @@ pipeline {
                     docker{
                             image 'mcr.microsoft.com/playwright:v1.50.0-noble'
                             reuseNode true
-                            }
                     }
+                }
                 environment{
                         CI_ENVIRONMENT_URL = '${env.ST_LINK}'
                 }
                 steps{
-                        sh '''
-                         sleep 10
-                        '''
+                    sh '''
+                        sleep 10
+                    '''
                         // npx playwright install
                         // // npm start &
                         // sleep 10
@@ -156,7 +156,7 @@ pipeline {
                    node_modules/.bin/netlify --version
                    echo "Site id deployed : $NETLIFY_SITE_ID"
                    node_modules/.bin/netlify status
-                   node_modules/.bin/netlify deploy  --dir=build --prod --json > deploy_status_prod.json
+                   ode_modules/.bin/netlify deploy  --dir=build --json > deploy_status.json
                    CI_ENVIRONMENT_URL = ${node_modules/.bin/node-jq -r '.deploy_url' deploy_status_prod.json}
                    npx playwright install
                    npx playwright test --reporter=html
