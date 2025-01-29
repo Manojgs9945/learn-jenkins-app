@@ -53,7 +53,6 @@ pipeline {
                     }
                     steps{
                         sh '''
-                        npx playwright install
                         node_modules/.bin/serve -s build &
                         sleep 20
                         npx playwright test --reporter=html
@@ -148,7 +147,7 @@ pipeline {
         stage('Deploy Prod') {
             agent {
                 docker{
-                    image 'mcr.microsoft.com/playwright:v1.50.0-noble'
+                    image 'my_play'
                     reuseNode true
                 }
             }
@@ -156,15 +155,13 @@ pipeline {
                 echo 'Deployment starts'
                 echo "MY_VAR1 is : ${env.MY_VAR1}"
                 echo "Date from deploy staging : ${env.MY_VAR2}"
-                sh '''
-                   npm install netlify-cli 
-                   node_modules/.bin/netlify --version
+                sh ''' 
+                   netlify --version
                    echo "Site id deployed : $NETLIFY_SITE_ID"
-                   node_modules/.bin/netlify status
-                   node_modules/.bin/netlify deploy --dir=build --prod --json > deploy_status_prod.json
-                   export CI_ENVIRONMENT_URL=$(node_modules/.bin/node-jq -r '.deploy_url' deploy_status_prod.json)
+                   netlify status
+                   netlify deploy --dir=build --prod --json > deploy_status_prod.json
+                   export CI_ENVIRONMENT_URL=$(node-jq -r '.deploy_url' deploy_status_prod.json)
                    echo "Production URL: $CI_ENVIRONMENT_URL"
-                   npx playwright install
                    npx playwright test --reporter=html
                 '''
             }
