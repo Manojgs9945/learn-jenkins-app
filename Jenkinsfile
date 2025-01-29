@@ -157,7 +157,8 @@ pipeline {
                    echo "Site id deployed : $NETLIFY_SITE_ID"
                    node_modules/.bin/netlify status
                    node_modules/.bin/netlify deploy --dir=build --prod --json > deploy_status_prod.json
-                   CI_ENVIRONMENT_URL = ${node_modules/.bin/node-jq -r '.deploy_url' deploy_status_prod.json}
+                   export CI_ENVIRONMENT_URL=$(node_modules/.bin/node-jq -r '.deploy_url' deploy_status_prod.json)
+                   echo "Production URL: $CI_ENVIRONMENT_URL"
                    npx playwright install
                    npx playwright test --reporter=html
                 '''
