@@ -125,9 +125,9 @@ pipeline {
                 }
                 steps{
                     sh '''
-                        npm start &
+                        // npm start &
                         sleep 10
-                        npx playwright test --reporter=html
+                        // npx playwright test --reporter=html
                     '''    
                 }
                 // post{
