@@ -67,6 +67,8 @@ pipeline {
                 }
             }
         }
+    }
+}
             // stage('unit_test'){
             //     steps{
             //         sh'''
@@ -92,100 +94,100 @@ pipeline {
             //     }
             // }
 
-        stage('Deploy staging') {
-            agent {
-                docker{
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
-            steps {
-                echo 'Deployment starts'
-                sh '''
-                   npm install netlify-cli node-jq
-                   node_modules/.bin/netlify --version
-                   echo "Site id deployed : $NETLIFY_SITE_ID"
-                   node_modules/.bin/netlify status
-                   node_modules/.bin/netlify deploy  --dir=build --json > deploy_status_stage.json
-                '''
-                script{
-                   env.ST_LINK = sh(script : "node_modules/.bin/node-jq -r '.deploy_url' deploy_status_stage.json", returnStdout: true)
-                }
-            }
-        }
-        stage('stage E2E'){
-                agent{
-                    docker{
-                            image 'my_play'
-                            reuseNode true
-                    }
-                }
-                environment{
-                        CI_ENVIRONMENT_URL = '${env.ST_LINK}'
-                }
-                steps{
-                    sh '''
-                        sleep 10
-                    ''' 
-                    // npm start &
+//         stage('Deploy staging') {
+//             agent {
+//                 docker{
+//                     image 'node:18-alpine'
+//                     reuseNode true
+//                 }
+//             }
+//             steps {
+//                 echo 'Deployment starts'
+//                 sh '''
+//                    npm install netlify-cli node-jq
+//                    node_modules/.bin/netlify --version
+//                    echo "Site id deployed : $NETLIFY_SITE_ID"
+//                    node_modules/.bin/netlify status
+//                    node_modules/.bin/netlify deploy  --dir=build --json > deploy_status_stage.json
+//                 '''
+//                 script{
+//                    env.ST_LINK = sh(script : "node_modules/.bin/node-jq -r '.deploy_url' deploy_status_stage.json", returnStdout: true)
+//                 }
+//             }
+//         }
+//         stage('stage E2E'){
+//                 agent{
+//                     docker{
+//                             image 'my_play'
+//                             reuseNode true
+//                     }
+//                 }
+//                 environment{
+//                         CI_ENVIRONMENT_URL = '${env.ST_LINK}'
+//                 }
+//                 steps{
+//                     sh '''
+//                         sleep 10
+//                     ''' 
+//                     // npm start &
                         
-                        // npx playwright test --reporter=html   
-                }
-                // post{
-                //         always{
-                //                 publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'playwright HTML Report E2E Prod', reportTitles: '', useWrapperFileDirectly: true])
-                //             }
-                // }
-        }
-        stage('Approval'){
-            steps{
-                timeout(15){
-                        input message: 'Are you ready for deploy?', ok: 'Proceed with deployment'
-                        }
-                }
-        }
-        stage('Deploy Prod') {
-            agent {
-                docker{
-                    image 'my_play'
-                    reuseNode true
-                }
-            }
-            steps {
-                echo 'Deployment starts'
-                echo "MY_VAR1 is : ${env.MY_VAR1}"
-                echo "Date from deploy staging : ${env.MY_VAR2}"
-                sh ''' 
-                   netlify --version
-                   echo "Site id deployed : $NETLIFY_SITE_ID"
-                   netlify status
-                   netlify deploy --dir=build --prod --json > deploy_status_prod.json
-                   export CI_ENVIRONMENT_URL=$(node-jq -r '.deploy_url' deploy_status_prod.json)
-                   echo "Production URL: $CI_ENVIRONMENT_URL"
-                   npx playwright install
-                   npx playwright test --reporter=html
-                '''
-            }
-            post{
-                always{
-                        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'playwright HTML Report E2E Prod', reportTitles: '', useWrapperFileDirectly: true])
-                }
-            }
-        }
-        // stage('Prod E2E'){
-        //         agent{
-        //             docker{
-        //                     image 'mcr.microsoft.com/playwright:v1.50.0-noble'
-        //                     reuseNode true
-        //                     }
-        //             }
-        //         environment{
-        //                 CI_ENVIRONMENT_URL = 'https://firstmanualdepolyment.netlify.app/'
-        //         }
-        //         steps{
-        //                 sh '''
+//                         // npx playwright test --reporter=html   
+//                 }
+//                 // post{
+//                 //         always{
+//                 //                 publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'playwright HTML Report E2E Prod', reportTitles: '', useWrapperFileDirectly: true])
+//                 //             }
+//                 // }
+//         }
+//         stage('Approval'){
+//             steps{
+//                 timeout(15){
+//                         input message: 'Are you ready for deploy?', ok: 'Proceed with deployment'
+//                         }
+//                 }
+//         }
+//         stage('Deploy Prod') {
+//             agent {
+//                 docker{
+//                     image 'my_play'
+//                     reuseNode true
+//                 }
+//             }
+//             steps {
+//                 echo 'Deployment starts'
+//                 echo "MY_VAR1 is : ${env.MY_VAR1}"
+//                 echo "Date from deploy staging : ${env.MY_VAR2}"
+//                 sh ''' 
+//                    netlify --version
+//                    echo "Site id deployed : $NETLIFY_SITE_ID"
+//                    netlify status
+//                    netlify deploy --dir=build --prod --json > deploy_status_prod.json
+//                    export CI_ENVIRONMENT_URL=$(node-jq -r '.deploy_url' deploy_status_prod.json)
+//                    echo "Production URL: $CI_ENVIRONMENT_URL"
+//                    npx playwright install
+//                    npx playwright test --reporter=html
+//                 '''
+//             }
+//             post{
+//                 always{
+//                         publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'playwright HTML Report E2E Prod', reportTitles: '', useWrapperFileDirectly: true])
+//                 }
+//             }
+//         }
+//         // stage('Prod E2E'){
+//         //         agent{
+//         //             docker{
+//         //                     image 'mcr.microsoft.com/playwright:v1.50.0-noble'
+//         //                     reuseNode true
+//         //                     }
+//         //             }
+//         //         environment{
+//         //                 CI_ENVIRONMENT_URL = 'https://firstmanualdepolyment.netlify.app/'
+//         //         }
+//         //         steps{
+//         //                 sh '''
                         
-        //                 '''
-        //         }
-    }
-}
+//         //                 '''
+//         //         }
+//     }
+// }
